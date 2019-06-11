@@ -1,0 +1,8 @@
+---
+registry: https://foo.bar
+rules:
+  - repos:
+      - tumblr/redpop
+    match_tags:
+      - pr-.*
+    keep_days: 14

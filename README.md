@@ -1,0 +1,27 @@
+# docker-registry-pruner 🌱✂️
+
+
+`docker-registry-pruner` is a rules-based tool that applies business logic to docker images in a Docker Registry storage system for retention.
+
+![GitHub release](https://img.shields.io/github/release/tumblr/docker-registry-pruner.svg) ![Travis (.org)](https://img.shields.io/travis/tumblr/docker-registry-pruner.svg) ![Docker Automated build](https://img.shields.io/docker/automated/tumblr/docker-registry-pruner.svg) ![Docker Build Status](https://img.shields.io/docker/build/tumblr/docker-registry-pruner.svg) ![MicroBadger Size](https://img.shields.io/microbadger/image-size/tumblr/docker-registry-pruner.svg) ![Docker Pulls](https://img.shields.io/docker/pulls/tumblr/docker-registry-pruner.svg) ![Docker Stars](https://img.shields.io/docker/stars/tumblr/docker-registry-pruner.svg) [![Godoc](https://godoc.org/github.com/tumblr/docker-registry-pruner?status.svg)](http://godoc.org/github.com/tumblr/docker-registry-pruner)
+
+
+# Documentation
+
+## Configuration
+
+See the [configuration overview](/docs/config.md) for how to write config files to apply retention rules to images in your Registry.
+
+# Examples
+
+Check out [docs/examples.md](/docs/examples.md) for examples using the CLI tool.
+
+# Hacking
+
+See [docs/hacking.md](/docs/hacking.md) for how to hack and contribute.
+
+# License
+
+[Apache 2.0](/LICENSE.txt)
+
+Copyright 2019, Tumblr, Inc.

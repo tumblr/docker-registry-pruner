@@ -1,0 +1,11 @@
+---
+registry: https://foo.bar
+rules:
+  - repos:
+      - tumblr/bb8
+    keep_versions: 10
+  - repos:
+      - something/else
+    match_tags:
+      - pr-.*
+    keep_days: 14

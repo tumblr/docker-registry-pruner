@@ -1,0 +1,7 @@
+---
+registry: https://foo.bar
+rules:
+  - repos:
+      - tumblr/redpop
+      - tumblr/bb8
+    keep_recent: 4

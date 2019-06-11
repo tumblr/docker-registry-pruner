@@ -1,0 +1,41 @@
+---
+registry: https://registry.company.net
+
+rules:
+  # we want to cleanup all images created for testing PRs after 30 days
+  - repos:
+      - someteam/jinglejangle
+    match_tags:
+      - pr-.*
+    keep_days: 30
+
+  # we only want to keep the latest 20 images for tumblr/tumblr
+  - repos:
+      - tumblr/tumblr
+    keep_recent: 20
+
+  # only keep latest 5 images for the tools we build for CI unit tests and such
+  - repos:
+      - php-runtime/dev/phan
+      - php-runtime/dev/phpcs
+      - php-runtime/dev/phpunit
+    keep_recent: 5
+
+  # keep 15 latest semantic versions of breakingbot
+  - repos:
+      - tumblr/breakingbot
+    match_tags:
+      - ^v\d+\.\d+\.\d+.*
+    keep_versions: 15
+
+  # keep 5 semantic versions of these security tools, if the tags match
+  # specific release branches
+  - repos:
+      - security/donut
+      - security/waffle
+      - security/beniget
+    match_tags:
+      - -production$
+      - -staging$
+      - -master$
+    keep_versions: 5

@@ -1,0 +1,10 @@
+---
+registry: https://foo.bar
+# this illustrates behavior of rules that match multiple repos, and ensure that the kept 
+# version sets are computed independently for each repo
+rules:
+  - repos:
+      - image/x
+      - image/y
+    keep_versions: 3
+

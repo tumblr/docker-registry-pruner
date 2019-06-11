@@ -1,0 +1,7 @@
+---
+registry: https://foo.bar
+rules:
+  - match_tags:
+      - ^v\d+.\d+.\d+
+    keep_days: 69
+

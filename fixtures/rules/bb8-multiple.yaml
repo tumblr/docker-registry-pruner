@@ -1,0 +1,17 @@
+---
+registry: https://foo.bar
+# this illustrates behavior of rules that impact the same set of images
+rules:
+  - repos:
+      - tumblr/bb8
+    match_tags:
+      - ^v\d+.\d+.\d+
+    keep_versions: 2
+  - repos:
+      - tumblr/bb8
+    ignore_tags: []
+    keep_days: 2
+  - repos:
+      - no/op
+    keep_days: 69
+

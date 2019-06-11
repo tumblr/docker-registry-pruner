@@ -1,0 +1,10 @@
+---
+registry: https://foo.bar
+rules:
+  - repos:
+      - tumblr/bb8
+    match_tags:
+      - ^v\d+.\d+.\d+
+    ignore_tags:
+      - some-ignored-tag
+

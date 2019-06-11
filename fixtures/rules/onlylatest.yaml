@@ -1,0 +1,8 @@
+---
+registry: https://foo.bar
+# this illustrates how an image with tag "latest" that is old will be ignored, due to
+# the default ignore_tags:[latest] behavior
+rules:
+  - repos:
+      - image/latest
+    keep_days: 2

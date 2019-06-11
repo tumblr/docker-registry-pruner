@@ -3,12 +3,12 @@ registry: https://foo.bar
 # this illustrates behavior of rules that impact the same set of images
 rules:
   - repos:
-      - tumblr/bb8
+      - tumblr/fleeble
     match_tags:
       - ^v\d+.\d+.\d+
     keep_versions: 2
   - repos:
-      - tumblr/redpop
+      - tumblr/plumbus
     match_tags:
       - ^pr-\d+
     keep_days: 14

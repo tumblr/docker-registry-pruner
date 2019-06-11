@@ -18,12 +18,12 @@ import (
 var (
 	rulesDir   = "test/fixtures/rules"
 	testImages = map[string][]string{
-		"tumblr/bb8": []string{"v0.6.0-480-g5d09186", "v0.6.0-486-g77397a0", "v0.6.0-413-g463a787", "latest", "v4.2.0", "v4.2.1", "some-ignored-tag", "anothertag", "0.1.2+notignored"},
-		"gar/nix":    []string{},
-		"foo/bar":    []string{"1.2.3", "abf273", "henlo"},
-		"image/x":    []string{"v0.1.1+x", "v0.6.9+x", "v4.2.1+x", "0.0.1+x", "0.0.2+x"},
-		"image/y":    []string{"v0.1.0+y", "v0.69.420+y", "v4.2.0+y", "0.0.1+y", "0.0.2+y"},
-		"tumblr/redpop": []string{
+		"tumblr/fleeble": []string{"v0.6.0-480-g5d09186", "v0.6.0-486-g77397a0", "v0.6.0-413-g463a787", "latest", "v4.2.0", "v4.2.1", "some-ignored-tag", "anothertag", "0.1.2+notignored"},
+		"gar/nix":        []string{},
+		"foo/bar":        []string{"1.2.3", "abf273", "henlo"},
+		"image/x":        []string{"v0.1.1+x", "v0.6.9+x", "v4.2.1+x", "0.0.1+x", "0.0.2+x"},
+		"image/y":        []string{"v0.1.0+y", "v0.69.420+y", "v4.2.0+y", "0.0.1+y", "0.0.2+y"},
+		"tumblr/plumbus": []string{
 			"abcdef123", "v1.2.3", "v1.2.4", "v1.2.5", "v2.0+hello", "pr-123", "pr-124", "pr-2345",
 		},
 	}
@@ -31,12 +31,12 @@ var (
 
 func TestLoadRules(t *testing.T) {
 	tests := map[string]int{
-		"bb8-ignore-some.yaml":   2,
-		"bb8-match-version.yaml": 2,
-		"bb8-match-all.yaml":     2,
-		"redpop-pr.yaml":         1,
-		"bb8-multiple.yaml":      3,
-		"multiple-repos.yaml":    3,
+		"fleeble-ignore-some.yaml":   2,
+		"fleeble-match-version.yaml": 2,
+		"fleeble-match-all.yaml":     2,
+		"plumbus-pr.yaml":            1,
+		"fleeble-multiple.yaml":      3,
+		"multiple-repos.yaml":        3,
 	}
 	for f, nExpected := range tests {
 		cfg, err := config.LoadFromFile(rulesDir + "/" + f)
@@ -54,11 +54,11 @@ func TestLoadRules(t *testing.T) {
 
 func TestMatching(t *testing.T) {
 	fixturesExpected := map[string][]string{
-		"bb8-match-all.yaml":     []string{"v0.6.0-480-g5d09186", "v0.6.0-486-g77397a0", "v0.6.0-413-g463a787", "v4.2.0", "v4.2.1", "some-ignored-tag", "0.1.2+notignored", "anothertag"},
-		"bb8-match-version.yaml": []string{"v0.6.0-480-g5d09186", "v0.6.0-486-g77397a0", "v0.6.0-413-g463a787", "v4.2.0", "v4.2.1"},
-		"bb8-ignore-some.yaml":   []string{"0.1.2+notignored", "anothertag"},
+		"fleeble-match-all.yaml":     []string{"v0.6.0-480-g5d09186", "v0.6.0-486-g77397a0", "v0.6.0-413-g463a787", "v4.2.0", "v4.2.1", "some-ignored-tag", "0.1.2+notignored", "anothertag"},
+		"fleeble-match-version.yaml": []string{"v0.6.0-480-g5d09186", "v0.6.0-486-g77397a0", "v0.6.0-413-g463a787", "v4.2.0", "v4.2.1"},
+		"fleeble-ignore-some.yaml":   []string{"0.1.2+notignored", "anothertag"},
 	}
-	repo := "tumblr/bb8"
+	repo := "tumblr/fleeble"
 	for f, expectedTags := range fixturesExpected {
 		fixture := rulesDir + "/" + f
 		t.Logf("loading rules %s for %s", fixture, repo)
@@ -91,24 +91,24 @@ func TestMatching(t *testing.T) {
 func TestFilterRepoTags(t *testing.T) {
 	repoTags := testImages
 	fixturesRulesToExpected := map[string]map[string][]string{
-		"bb8-ignore-some.yaml": map[string][]string{
-			"tumblr/bb8": []string{"0.1.2+notignored", "anothertag"},
+		"fleeble-ignore-some.yaml": map[string][]string{
+			"tumblr/fleeble": []string{"0.1.2+notignored", "anothertag"},
 		},
-		"bb8-match-all.yaml": map[string][]string{
-			"tumblr/bb8": []string{"0.1.2+notignored", "anothertag", "some-ignored-tag", "v0.6.0-413-g463a787", "v0.6.0-480-g5d09186", "v0.6.0-486-g77397a0", "v4.2.0", "v4.2.1"},
+		"fleeble-match-all.yaml": map[string][]string{
+			"tumblr/fleeble": []string{"0.1.2+notignored", "anothertag", "some-ignored-tag", "v0.6.0-413-g463a787", "v0.6.0-480-g5d09186", "v0.6.0-486-g77397a0", "v4.2.0", "v4.2.1"},
 		},
-		"bb8-match-version.yaml": map[string][]string{
-			"tumblr/bb8": []string{"v0.6.0-413-g463a787", "v0.6.0-480-g5d09186", "v0.6.0-486-g77397a0", "v4.2.0", "v4.2.1"},
+		"fleeble-match-version.yaml": map[string][]string{
+			"tumblr/fleeble": []string{"v0.6.0-413-g463a787", "v0.6.0-480-g5d09186", "v0.6.0-486-g77397a0", "v4.2.0", "v4.2.1"},
 		},
-		"redpop-pr.yaml": map[string][]string{
-			"tumblr/redpop": []string{"pr-123", "pr-124", "pr-2345"},
+		"plumbus-pr.yaml": map[string][]string{
+			"tumblr/plumbus": []string{"pr-123", "pr-124", "pr-2345"},
 		},
-		"bb8-tagselectors.yaml": map[string][]string{
-			"tumblr/bb8": []string{"v0.6.0-413-g463a787", "v0.6.0-480-g5d09186", "v0.6.0-486-g77397a0", "v4.2.0", "v4.2.1"},
+		"fleeble-tagselectors.yaml": map[string][]string{
+			"tumblr/fleeble": []string{"v0.6.0-413-g463a787", "v0.6.0-480-g5d09186", "v0.6.0-486-g77397a0", "v4.2.0", "v4.2.1"},
 		},
 		"multiple-repos.yaml": map[string][]string{
-			"tumblr/bb8":    []string{"v0.6.0-413-g463a787", "v0.6.0-480-g5d09186", "v0.6.0-486-g77397a0", "v4.2.0", "v4.2.1"},
-			"tumblr/redpop": []string{"pr-123", "pr-124", "pr-2345"},
+			"tumblr/fleeble": []string{"v0.6.0-413-g463a787", "v0.6.0-480-g5d09186", "v0.6.0-486-g77397a0", "v4.2.0", "v4.2.1"},
+			"tumblr/plumbus": []string{"pr-123", "pr-124", "pr-2345"},
 		},
 		"multiple-repo-versions.yaml": map[string][]string{
 			"image/x": []string{"0.0.1+x", "0.0.2+x", "v0.1.1+x", "v0.6.9+x", "v4.2.1+x"},

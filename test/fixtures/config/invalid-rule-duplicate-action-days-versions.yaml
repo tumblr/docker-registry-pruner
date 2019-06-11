@@ -1,0 +1,12 @@
+---
+registry: https://foo.bar
+rules:
+  - repos:
+      - tumblr/fleeble
+    match_tags:
+      - ^v\d+.\d+.\d+
+    ignore_tags:
+      - some-ignored-tag
+    keep_days: 10
+    keep_versions: 5
+

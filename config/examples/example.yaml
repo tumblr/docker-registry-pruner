@@ -21,9 +21,9 @@ rules:
       - php-runtime/dev/phpunit
     keep_recent: 5
 
-  # keep 15 latest semantic versions of breakingbot
+  # keep 15 latest semantic versions of someslackbot
   - repos:
-      - tumblr/breakingbot
+      - tumblr/someslackbot
     match_tags:
       - ^v\d+\.\d+\.\d+.*
     keep_versions: 15

@@ -2,6 +2,6 @@
 registry: https://foo.bar
 rules:
   - repos:
-      - tumblr/redpop
-      - tumblr/bb8
+      - tumblr/plumbus
+      - tumblr/fleeble
     keep_recent: 4

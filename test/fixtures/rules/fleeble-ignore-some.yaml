@@ -2,10 +2,11 @@
 registry: https://foo.bar
 rules:
   - repos:
-      - tumblr/bb8
-    match_tags:
-      - ^v\d+.\d+.\d+
-    keep_versions: 5
+      - tumblr/fleeble
+    ignore_tags:
+      - some-ignored-tag
+      - ^v.+
+    keep_days: 1
   - repos:
       - something/else
     match_tags:

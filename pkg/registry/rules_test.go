@@ -21,35 +21,35 @@ var (
 
 	tNow      = time.Now()
 	manifests = []*Manifest{
-		mkmanifest("tumblr/redpop", "v1.2.3", 4),
-		mkmanifest("tumblr/redpop", "v1.0.3+metadata", 69),
-		mkmanifest("tumblr/redpop", "pr-69420+13d", 13),
-		mkmanifest("tumblr/redpop", "pr-69420+14d", 14),
-		mkmanifest("tumblr/redpop", "master-v1.2.3-69", 14),
-		mkmanifest("tumblr/redpop", "master-2019", 14),
-		mkmanifest("tumblr/redpop", "pr-420", 1),
-		mkmanifest("tumblr/redpop", "pr-69", 5),
-		mkmanifest("tumblr/redpop", "pr-69421+15d", 15),
-		mkmanifest("tumblr/redpop", "pr-69419+16d", 16),
+		mkmanifest("tumblr/plumbus", "v1.2.3", 4),
+		mkmanifest("tumblr/plumbus", "v1.0.3+metadata", 69),
+		mkmanifest("tumblr/plumbus", "pr-69420+13d", 13),
+		mkmanifest("tumblr/plumbus", "pr-69420+14d", 14),
+		mkmanifest("tumblr/plumbus", "master-v1.2.3-69", 14),
+		mkmanifest("tumblr/plumbus", "master-2019", 14),
+		mkmanifest("tumblr/plumbus", "pr-420", 1),
+		mkmanifest("tumblr/plumbus", "pr-69", 5),
+		mkmanifest("tumblr/plumbus", "pr-69421+15d", 15),
+		mkmanifest("tumblr/plumbus", "pr-69419+16d", 16),
 		mkmanifest("image/latest", "latest", 69420),
-		mkmanifest("tumblr/bb8", "latest", 0),
-		mkmanifest("tumblr/bb8", "garbage", 5),
-		mkmanifest("tumblr/bb8", "v0.4.2-259-something", 5),
-		mkmanifest("tumblr/bb8", "v0.5.0-260", 4),
-		mkmanifest("tumblr/bb8", "v0.5.1-260", 4),
-		mkmanifest("tumblr/bb8", "v0.5.23+test", 3),
-		mkmanifest("tumblr/bb8", "v0.5.2", 3),
-		mkmanifest("tumblr/bb8", "some-ignored-tag", 69),
-		mkmanifest("tumblr/bb8", "oldtag-1", 69),
-		mkmanifest("tumblr/bb8", "oldtag-2", 70),
-		mkmanifest("tumblr/bb8", "v0.6.1-261-gbb41394", 0),
-		mkmanifest("tumblr/bb8", "v0.5.3-nice", 1),
-		mkmanifest("tumblr/bb8", "v0.69-6969", 1),
-		mkmanifest("tumblr/bb8", "v0.5.5-420", 1),
-		mkmanifest("tumblr/bb8", "v0.6.1-262", 0),
-		mkmanifest("tumblr/bb8", "branch-v1.2.3-69", 14),
-		mkmanifest("tumblr/bb8", "v0.69.1-262", 0),
-		mkmanifest("tumblr/bb8", "abc123f", 0),
+		mkmanifest("tumblr/fleeble", "latest", 0),
+		mkmanifest("tumblr/fleeble", "garbage", 5),
+		mkmanifest("tumblr/fleeble", "v0.4.2-259-something", 5),
+		mkmanifest("tumblr/fleeble", "v0.5.0-260", 4),
+		mkmanifest("tumblr/fleeble", "v0.5.1-260", 4),
+		mkmanifest("tumblr/fleeble", "v0.5.23+test", 3),
+		mkmanifest("tumblr/fleeble", "v0.5.2", 3),
+		mkmanifest("tumblr/fleeble", "some-ignored-tag", 69),
+		mkmanifest("tumblr/fleeble", "oldtag-1", 69),
+		mkmanifest("tumblr/fleeble", "oldtag-2", 70),
+		mkmanifest("tumblr/fleeble", "v0.6.1-261-gbb41394", 0),
+		mkmanifest("tumblr/fleeble", "v0.5.3-nice", 1),
+		mkmanifest("tumblr/fleeble", "v0.69-6969", 1),
+		mkmanifest("tumblr/fleeble", "v0.5.5-420", 1),
+		mkmanifest("tumblr/fleeble", "v0.6.1-262", 0),
+		mkmanifest("tumblr/fleeble", "branch-v1.2.3-69", 14),
+		mkmanifest("tumblr/fleeble", "v0.69.1-262", 0),
+		mkmanifest("tumblr/fleeble", "abc123f", 0),
 
 		mkmanifest("image/x", "v0.1.1+x", 0),
 		mkmanifest("image/x", "v0.6.9+x", 0),
@@ -66,37 +66,37 @@ var (
 		{
 			rulesFile: "multiple-repo-keep-latest.yaml",
 			input:     manifests,
-			// should keep the latest 4 images from both bb8 and redpop
+			// should keep the latest 4 images from both fleeble and plumbus
 			keepImages: []string{
-				"tumblr/bb8:abc123f",             // modified: 0 days ago
-				"tumblr/bb8:v0.6.1-261-gbb41394", // modified: 0 days ago
-				"tumblr/bb8:v0.6.1-262",          // modified: 0 days ago
-				"tumblr/bb8:v0.69.1-262",         // modified: 0 days ago
-				"tumblr/redpop:pr-420",           // modified: 1 days ago
-				"tumblr/redpop:v1.2.3",           // modified: 4 days ago
-				"tumblr/redpop:pr-69",            // modified: 5 days ago
-				"tumblr/redpop:pr-69420+13d",     // modified: 13 days ago
+				"tumblr/fleeble:abc123f",             // modified: 0 days ago
+				"tumblr/fleeble:v0.6.1-261-gbb41394", // modified: 0 days ago
+				"tumblr/fleeble:v0.6.1-262",          // modified: 0 days ago
+				"tumblr/fleeble:v0.69.1-262",         // modified: 0 days ago
+				"tumblr/plumbus:pr-420",              // modified: 1 days ago
+				"tumblr/plumbus:v1.2.3",              // modified: 4 days ago
+				"tumblr/plumbus:pr-69",               // modified: 5 days ago
+				"tumblr/plumbus:pr-69420+13d",        // modified: 13 days ago
 			},
 			deleteImages: []string{
-				"tumblr/bb8:branch-v1.2.3-69",
-				"tumblr/bb8:garbage",
-				"tumblr/bb8:oldtag-1",
-				"tumblr/bb8:oldtag-2",
-				"tumblr/bb8:some-ignored-tag",
-				"tumblr/bb8:v0.4.2-259-something",
-				"tumblr/bb8:v0.5.0-260",
-				"tumblr/bb8:v0.5.1-260",
-				"tumblr/bb8:v0.5.2",
-				"tumblr/bb8:v0.5.23+test",
-				"tumblr/bb8:v0.5.3-nice",
-				"tumblr/bb8:v0.5.5-420",
-				"tumblr/bb8:v0.69-6969",
-				"tumblr/redpop:master-2019",
-				"tumblr/redpop:master-v1.2.3-69",
-				"tumblr/redpop:pr-69419+16d",
-				"tumblr/redpop:pr-69420+14d",
-				"tumblr/redpop:pr-69421+15d",
-				"tumblr/redpop:v1.0.3+metadata",
+				"tumblr/fleeble:branch-v1.2.3-69",
+				"tumblr/fleeble:garbage",
+				"tumblr/fleeble:oldtag-1",
+				"tumblr/fleeble:oldtag-2",
+				"tumblr/fleeble:some-ignored-tag",
+				"tumblr/fleeble:v0.4.2-259-something",
+				"tumblr/fleeble:v0.5.0-260",
+				"tumblr/fleeble:v0.5.1-260",
+				"tumblr/fleeble:v0.5.2",
+				"tumblr/fleeble:v0.5.23+test",
+				"tumblr/fleeble:v0.5.3-nice",
+				"tumblr/fleeble:v0.5.5-420",
+				"tumblr/fleeble:v0.69-6969",
+				"tumblr/plumbus:master-2019",
+				"tumblr/plumbus:master-v1.2.3-69",
+				"tumblr/plumbus:pr-69419+16d",
+				"tumblr/plumbus:pr-69420+14d",
+				"tumblr/plumbus:pr-69421+15d",
+				"tumblr/plumbus:v1.0.3+metadata",
 			},
 		},
 		{
@@ -106,71 +106,71 @@ var (
 			deleteImages: []string{}, // we dont want to see it in delete, cause its ignored
 		},
 		{
-			rulesFile: "redpop-pr.yaml",
+			rulesFile: "plumbus-pr.yaml",
 			input:     manifests,
 			keepImages: []string{
-				"tumblr/redpop:pr-420",
-				"tumblr/redpop:pr-69",
-				"tumblr/redpop:pr-69420+13d",
-				"tumblr/redpop:pr-69420+14d"},
+				"tumblr/plumbus:pr-420",
+				"tumblr/plumbus:pr-69",
+				"tumblr/plumbus:pr-69420+13d",
+				"tumblr/plumbus:pr-69420+14d"},
 			deleteImages: []string{
-				"tumblr/redpop:pr-69419+16d",
-				"tumblr/redpop:pr-69421+15d"},
+				"tumblr/plumbus:pr-69419+16d",
+				"tumblr/plumbus:pr-69421+15d"},
 		},
 		{
 			// ignore some tags that would otherwise get cleaned up by date predicates
-			rulesFile:    "bb8-ignore-some.yaml",
+			rulesFile:    "fleeble-ignore-some.yaml",
 			input:        manifests,
-			keepImages:   []string{"tumblr/bb8:abc123f"},
-			deleteImages: []string{"tumblr/bb8:branch-v1.2.3-69", "tumblr/bb8:garbage", "tumblr/bb8:oldtag-1", "tumblr/bb8:oldtag-2"},
+			keepImages:   []string{"tumblr/fleeble:abc123f"},
+			deleteImages: []string{"tumblr/fleeble:branch-v1.2.3-69", "tumblr/fleeble:garbage", "tumblr/fleeble:oldtag-1", "tumblr/fleeble:oldtag-2"},
 		},
 		{
-			rulesFile: "bb8-match-version.yaml",
+			rulesFile: "fleeble-match-version.yaml",
 			// this rule should retain only 5 latest version tags
 			// and will implicitly skip all versions taht dont parse correctly as a Version
 			// meaning there should be no deletedTags that arent correct semantic versions
 			input: manifests,
 			keepImages: []string{
-				"tumblr/bb8:v0.5.23+test",
-				"tumblr/bb8:v0.6.1-261-gbb41394",
-				"tumblr/bb8:v0.6.1-262",
-				"tumblr/bb8:v0.69-6969",
-				"tumblr/bb8:v0.69.1-262",
+				"tumblr/fleeble:v0.5.23+test",
+				"tumblr/fleeble:v0.6.1-261-gbb41394",
+				"tumblr/fleeble:v0.6.1-262",
+				"tumblr/fleeble:v0.69-6969",
+				"tumblr/fleeble:v0.69.1-262",
 			},
 			deleteImages: []string{
-				"tumblr/bb8:v0.4.2-259-something",
-				"tumblr/bb8:v0.5.0-260",
-				"tumblr/bb8:v0.5.1-260",
-				"tumblr/bb8:v0.5.2",
-				"tumblr/bb8:v0.5.3-nice",
-				"tumblr/bb8:v0.5.5-420",
+				"tumblr/fleeble:v0.4.2-259-something",
+				"tumblr/fleeble:v0.5.0-260",
+				"tumblr/fleeble:v0.5.1-260",
+				"tumblr/fleeble:v0.5.2",
+				"tumblr/fleeble:v0.5.3-nice",
+				"tumblr/fleeble:v0.5.5-420",
 			},
 		},
 		{
 			// this should keep 2 latest version tags, and the last 2 days of all tags.
 			// this means there are some versions that would have been deleted, that are still retained
-			rulesFile: "bb8-multiple.yaml",
+			rulesFile: "fleeble-multiple.yaml",
 			input:     manifests,
 			keepImages: []string{
-				"tumblr/bb8:abc123f",
-				"tumblr/bb8:v0.69-6969",
-				"tumblr/bb8:v0.69.1-262",
+				"tumblr/fleeble:abc123f",
+				"tumblr/fleeble:v0.69-6969",
+				"tumblr/fleeble:v0.69.1-262",
 			},
 			deleteImages: []string{
-				"tumblr/bb8:branch-v1.2.3-69",
-				"tumblr/bb8:garbage",
-				"tumblr/bb8:oldtag-1",
-				"tumblr/bb8:oldtag-2",
-				"tumblr/bb8:some-ignored-tag", // ignored by 1 rule, but deleted by the nDays rule!
-				"tumblr/bb8:v0.4.2-259-something",
-				"tumblr/bb8:v0.5.0-260",
-				"tumblr/bb8:v0.5.1-260",
-				"tumblr/bb8:v0.5.2",
-				"tumblr/bb8:v0.5.23+test",
-				"tumblr/bb8:v0.5.3-nice",
-				"tumblr/bb8:v0.5.5-420",
-				"tumblr/bb8:v0.6.1-261-gbb41394",
-				"tumblr/bb8:v0.6.1-262",
+				"tumblr/fleeble:branch-v1.2.3-69",
+				"tumblr/fleeble:garbage",
+				"tumblr/fleeble:oldtag-1",
+				"tumblr/fleeble:oldtag-2",
+				"tumblr/fleeble:some-ignored-tag", // ignored by 1 rule, but deleted by the nDays rule!
+				"tumblr/fleeble:v0.4.2-259-something",
+				"tumblr/fleeble:v0.5.0-260",
+				"tumblr/fleeble:v0.5.1-260",
+				"tumblr/fleeble:v0.5.2",
+				"tumblr/fleeble:v0.5.23+test",
+				"tumblr/fleeble:v0.5.3-nice",
+				"tumblr/fleeble:v0.5.5-420",
+				"tumblr/fleeble:v0.6.1-261-gbb41394",
+				"tumblr/fleeble:v0.6.1-262",
 			},
 		},
 		{

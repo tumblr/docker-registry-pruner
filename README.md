@@ -8,6 +8,20 @@
 
 # Documentation
 
+## Quickstart
+
+See [configuration overview](/docs/config.md) for how to write a config file. Then, map it into your container and run the report!
+
+```
+$ docker run -ti -v $(pwd)/config:/app/config --rm tumblr/docker-registry-pruner --mode report --config ./config/myconfig.yaml
+```
+
+Once you are happy with the report, you can perform pruning! WARNING: this is destructive!
+
+```
+$ docker run -ti -v $(pwd)/config:/app/config --rm tumblr/docker-registry-pruner --mode prune --config ./config/myconfig.yaml
+```
+
 ## Configuration
 
 See the [configuration overview](/docs/config.md) for how to write config files to apply retention rules to images in your Registry.

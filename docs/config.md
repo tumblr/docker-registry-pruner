@@ -8,7 +8,7 @@ A Rule is made up of a Selector, and an Action. See below for more details.
 
 A selector is a predicate that images must satisfy to be considered by the `Action` for deletion.
 
-* `repos` is a list of repositories to apply this rule to. This is literal string matching, _not_ regex. (i.e. `tumblr/redpop`)
+* `repos` is a list of repositories to apply this rule to. This is literal string matching, _not_ regex. (i.e. `tumblr/plumbus`)
 * `match_tags` is a list of regexp. Any matching image will have the rule action evaluated against it (i.e. `^v\d+`)
 * `ignore_tags` is a list of regexp. Any matching image will explicitly not be evaluated, even if it would have matched `match_tags`
 
@@ -63,7 +63,7 @@ rules:
     keep_versions: 5
 
   - repos:
-      - tumblr/bb8
+      - tumblr/fleeble
     match_tags:
       - ^v\d+.\d+.\d+
     keep_versions: 5
@@ -85,7 +85,7 @@ rules:
 
   # keep only the most recent 5 images by modification time
   - repos:
-      - tumblr/airflow
+      - web/devtools
     keep_recent: 5
 ```
 

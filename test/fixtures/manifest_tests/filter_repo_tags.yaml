@@ -1,0 +1,133 @@
+source_manifests:
+  - name: tumblr/fleeble
+    tag: v0.6.0-480-g5d09186
+  - name: tumblr/fleeble
+    tag: v0.6.0-486-g77397a0
+  - name: tumblr/fleeble
+    tag: v0.6.0-413-g463a787
+  - name: tumblr/fleeble
+    tag: latest
+  - name: tumblr/fleeble
+    tag: v4.2.0
+  - name: tumblr/fleeble
+    tag: v4.2.1
+  - name: tumblr/fleeble
+    tag: some-ignored-tag
+  - name: tumblr/fleeble
+    tag: anothertag
+  - name: tumblr/fleeble
+    tag: 0.1.2+notignored
+  - name: foo/bar
+    tag: 1.2.3
+  - name: foo/bar
+    tag: abf273
+  - name: foo/bar
+    tag: henlo
+  - name: image/x
+    tag: v0.1.1+x
+  - name: image/x
+    tag: v0.6.9+x
+  - name: image/x
+    tag: v4.2.1+x
+  - name: image/x
+    tag: 0.0.1+x
+  - name: image/x
+    tag: 0.0.2+x
+  - name: image/y
+    tag: v0.1.0+y
+  - name: image/y
+    tag: v0.69.420+y
+  - name: image/y
+    tag: v4.2.0+y
+  - name: image/y
+    tag: 0.0.1+y
+  - name: image/y
+    tag: 0.0.2+y
+  - name: tumblr/plumbus
+    tag: abcdef123
+  - name: tumblr/plumbus
+    tag: v1.2.3
+  - name: tumblr/plumbus
+    tag: v1.2.4
+  - name: tumblr/plumbus
+    tag: v1.2.5
+  - name: tumblr/plumbus
+    tag: v2.0+hello
+  - name: tumblr/plumbus
+    tag: pr-123
+  - name: tumblr/plumbus
+    tag: pr-124
+  - name: tumblr/plumbus
+    tag: pr-2345
+tests:
+  - config: test/fixtures/rules/fleeble-ignore-some.yaml
+    expected:
+      keep:
+        tumblr/fleeble:
+          - 0.1.2+notignored
+          - anothertag
+  - config: test/fixtures/rules/fleeble-match-all.yaml
+    expected:
+      keep:
+        tumblr/fleeble:
+          - 0.1.2+notignored
+          - anothertag
+          - some-ignored-tag
+          - v0.6.0-413-g463a787
+          - v0.6.0-480-g5d09186
+          - v0.6.0-486-g77397a0
+          - v4.2.0
+          - v4.2.1
+  - config: test/fixtures/rules/fleeble-match-version.yaml
+    expected:
+      keep:
+        tumblr/fleeble:
+          - v0.6.0-413-g463a787
+          - v0.6.0-480-g5d09186
+          - v0.6.0-486-g77397a0
+          - v4.2.0
+          - v4.2.1
+  - config: test/fixtures/rules/plumbus-pr.yaml
+    expected:
+      keep:
+        tumblr/plumbus:
+          - pr-123
+          - pr-124
+          - pr-2345
+  - config: test/fixtures/rules/fleeble-tagselectors.yaml
+    expected:
+      keep:
+        tumblr/fleeble:
+          - v0.6.0-413-g463a787
+          - v0.6.0-480-g5d09186
+          - v0.6.0-486-g77397a0
+          - v4.2.0
+          - v4.2.1
+  - config: test/fixtures/rules/multiple-repos.yaml
+    expected:
+      keep:
+        tumblr/fleeble:
+          - v0.6.0-413-g463a787
+          - v0.6.0-480-g5d09186
+          - v0.6.0-486-g77397a0
+          - v4.2.0
+          - v4.2.1
+        tumblr/plumbus:
+          - pr-123
+          - pr-124
+          - pr-2345
+  - config: test/fixtures/rules/multiple-repo-versions.yaml
+    expected:
+      keep:
+        image/x:
+          - 0.0.1+x
+          - 0.0.2+x
+          - v0.1.1+x
+          - v0.6.9+x
+          - v4.2.1+x
+        image/y:
+          - 0.0.1+y
+          - 0.0.2+y
+          - v0.1.0+y
+          - v0.69.420+y
+          - v4.2.0+y

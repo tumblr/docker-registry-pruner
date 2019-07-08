@@ -1,0 +1,8 @@
+---
+registry: https://foo.bar
+rules:
+  # match any image that has the following labels, and only keep 3 versions
+  - labels:
+      prune: "true"
+      type: "devel"
+    keep_versions: 3

@@ -8,6 +8,7 @@ import (
 	"text/tabwriter"
 	"time"
 
+	"github.com/tumblr/docker-registry-pruner/pkg/client"
 	"github.com/tumblr/docker-registry-pruner/pkg/config"
 	"github.com/tumblr/docker-registry-pruner/pkg/registry"
 	"github.com/tumblr/docker-registry-pruner/pkg/rules"
@@ -43,7 +44,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	hub, err := registry.New(cfg)
+	hub, err := client.New(cfg)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -62,7 +63,7 @@ func main() {
 		repos = append(repos, repo)
 	}
 
-	for _, rule := range hub.Rules {
+	for _, rule := range hub.Config.Rules {
 		log.Infof("Loaded rule: %s", rule.String())
 	}
 
@@ -94,24 +95,31 @@ func PrintTableManifests(matches map[string][]*registry.Manifest) {
 	w.Flush()
 }
 
-func FetchImagesAndApplyRules(hub *registry.Client, repos []string) map[string][]*registry.Manifest {
+func FetchImagesAndApplyRules(hub *client.Client, repos []string) map[string][]*registry.Manifest {
 	repoTags, err := hub.RepoTags(repos)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	selectors := rules.RulesToSelectors(hub.Rules)
-	filteredRepoTags := rules.FilterRepoTags(repoTags, selectors)
-	for repo, tags := range filteredRepoTags {
-		log.Debugf("Repo %s has %d tag matching ruless\n", repo, len(tags))
-	}
-
-	allManifests, err := hub.Manifests(filteredRepoTags)
+	selectors := rules.RulesToSelectors(hub.Config.Rules)
+	allManifests, err := hub.Manifests(repoTags)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	keep, delete := registry.ApplyRules(hub.Rules, allManifests)
+	filteredManifestsByRepo := rules.FilterManifests(allManifests, selectors)
+	filteredManifests := []*registry.Manifest{}
+	filteredCount := 0
+	for n, manifests := range filteredManifestsByRepo {
+		filteredCount += len(manifests)
+		log.Debugf("%s: filtered to %d manifests", n, len(manifests))
+		for _, m := range manifests {
+			filteredManifests = append(filteredManifests, m)
+		}
+	}
+	log.Debugf("Selector filtering %d manifests to %d manifests", len(allManifests), len(filteredManifests))
+
+	keep, delete := rules.ApplyRules(hub.Config.Rules, filteredManifests)
 	matches := map[string][]*registry.Manifest{
 		"keep":   keep,
 		"delete": delete,
@@ -119,7 +127,7 @@ func FetchImagesAndApplyRules(hub *registry.Client, repos []string) map[string][
 	return matches
 }
 
-func ShowMatchingRepos(hub *registry.Client, repos []string) {
+func ShowMatchingRepos(hub *client.Client, repos []string) {
 	log.Infof("Querying for manifests. This may take a while...")
 	matches := FetchImagesAndApplyRules(hub, repos)
 	deletes, keeps := len(matches["delete"]), len(matches["keep"])
@@ -127,7 +135,7 @@ func ShowMatchingRepos(hub *registry.Client, repos []string) {
 	fmt.Fprintf(os.Stderr, "deleting %d images, keeping %d images\n", deletes, keeps)
 }
 
-func DeleteMatchingImages(hub *registry.Client, repos []string) bool {
+func DeleteMatchingImages(hub *client.Client, repos []string) bool {
 	log.Infof("Querying for manifests. This may take a while...")
 	matches := FetchImagesAndApplyRules(hub, repos)
 	log.Infof("Beginning deletion of %d images", len(matches["delete"]))

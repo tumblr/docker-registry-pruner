@@ -51,6 +51,7 @@ GO2XUNIT = $(BIN)/go2xunit
 $(BIN)/go2xunit: | ; $(info $(M) building go2xunit…)
 	$Q go get github.com/tebeka/go2xunit
 
+
 # Tests
 #
 
@@ -63,10 +64,10 @@ test-race:    ARGS=-race         ## Run tests with race detector
 $(TEST_TARGETS): NAME=$(MAKECMDGOALS:test-%=%)
 $(TEST_TARGETS): test
 check test tests: fmt lint vendor | ; $(info $(M) running $(NAME:%=% )tests…) @ ## Run tests
-	$Q $(GO) test -timeout $(TIMEOUT)s $(ARGS) $(TESTPKGS)
+	$Q $(GO) test -count=1 -timeout $(TIMEOUT)s $(ARGS) $(TESTPKGS)
 
 test-xml: fmt lint vendor | $(GO2XUNIT) ; $(info $(M) running $(NAME:%=% )tests…) @ ## Run tests with xUnit output
-	$Q 2>&1 $(GO) test -timeout 20s -v $(TESTPKGS) | tee test/tests.output
+	$Q 2>&1 $(GO) test -count=1 -timeout 20s -v $(TESTPKGS) | tee test/tests.output
 	$(GO2XUNIT) -fail -input test/tests.output -output test/tests.xml
 
 COVERAGE_MODE = atomic
@@ -79,7 +80,7 @@ test-coverage: COVERAGE_DIR := $(CURDIR)/test/coverage.$(shell date -u +"%Y-%m-%
 test-coverage: fmt lint vendor test-coverage-tools | ; $(info $(M) running coverage tests…) @ ## Run coverage tests
 	$Q mkdir -p $(COVERAGE_DIR)/coverage
 	$Q for pkg in $(TESTPKGS); do \
-		$(GO) test \
+		$(GO) test -count=1 \
 			-coverpkg=$$($(GO) list -f '{{ join .Deps "\n" }}' $$pkg | \
 					grep '^$(PACKAGE)/' | grep -v '^$(PACKAGE)/vendor/' | \
 					tr '\n' ',')$$pkg \

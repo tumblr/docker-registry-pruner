@@ -1,0 +1,398 @@
+---
+source_manifests:
+- name: tumblr/plumbus
+  tag: v1.2.3
+  days_old: 4
+  labels: {}
+- name: tumblr/plumbus
+  tag: v1.0.3+metadata
+  days_old: 69
+  labels: {}
+- name: tumblr/plumbus
+  tag: pr-69420+13d
+  days_old: 13
+  labels: {}
+- name: tumblr/plumbus
+  tag: pr-69420+14d
+  days_old: 14
+  labels: {}
+- name: tumblr/plumbus
+  tag: master-v1.2.3-69
+  days_old: 14
+  labels: {}
+- name: tumblr/plumbus
+  tag: master-2019
+  days_old: 14
+  labels: {}
+- name: tumblr/plumbus
+  tag: pr-420
+  days_old: 1
+  labels: {}
+- name: tumblr/plumbus
+  tag: pr-69
+  days_old: 5
+  labels: {}
+- name: tumblr/plumbus
+  tag: pr-69421+15d
+  days_old: 15
+  labels: {}
+- name: tumblr/plumbus
+  tag: pr-69419+16d
+  days_old: 16
+  labels: {}
+- name: image/latest
+  tag: latest
+  days_old: 69420
+  labels: {}
+- name: tumblr/fleeble
+  tag: latest
+  days_old: 0
+  labels: {}
+- name: tumblr/fleeble
+  tag: garbage
+  days_old: 5
+  labels: {}
+- name: tumblr/fleeble
+  tag: v0.4.2-259-something
+  days_old: 5
+  labels: {}
+- name: tumblr/fleeble
+  tag: v0.5.0-260
+  days_old: 4
+  labels: {}
+- name: tumblr/fleeble
+  tag: v0.5.1-260
+  days_old: 4
+  labels: {}
+- name: tumblr/fleeble
+  tag: v0.5.23+test
+  days_old: 3
+  labels: {}
+- name: tumblr/fleeble
+  tag: v0.5.2
+  days_old: 3
+  labels: {}
+- name: tumblr/fleeble
+  tag: some-ignored-tag
+  days_old: 69
+  labels: {}
+- name: tumblr/fleeble
+  tag: oldtag-1
+  days_old: 69
+  labels: {}
+- name: tumblr/fleeble
+  tag: oldtag-2
+  days_old: 70
+  labels: {}
+- name: tumblr/fleeble
+  tag: v0.6.1-261-gbb41394
+  days_old: 0
+  labels: {}
+- name: tumblr/fleeble
+  tag: v0.5.3-nice
+  days_old: 1
+  labels: {}
+- name: tumblr/fleeble
+  tag: v0.69-6969
+  days_old: 1
+  labels: {}
+- name: tumblr/fleeble
+  tag: v0.5.5-420
+  days_old: 1
+  labels: {}
+- name: tumblr/fleeble
+  tag: v0.6.1-262
+  days_old: 0
+  labels: {}
+- name: tumblr/fleeble
+  tag: branch-v1.2.3-69
+  days_old: 14
+  labels: {}
+- name: tumblr/fleeble
+  tag: v0.69.1-262
+  days_old: 0
+  labels: {}
+- name: tumblr/fleeble
+  tag: abc123f
+  days_old: 0
+  labels: {}
+- name: image/x
+  tag: v0.1.1+x
+  days_old: 0
+  labels: {}
+- name: image/x
+  tag: v0.6.9+x
+  days_old: 0
+  labels: {}
+- name: image/x
+  tag: v4.2.1+x
+  days_old: 0
+  labels: {}
+- name: image/x
+  tag: 0.0.1+x
+  days_old: 0
+  labels: {}
+- name: image/x
+  tag: 0.0.2+x
+  days_old: 0
+  labels: {}
+- name: image/y
+  tag: v0.1.0+y
+  days_old: 0
+  labels: {}
+- name: image/y
+  tag: v0.69.420+y
+  days_old: 0
+  labels: {}
+- name: image/y
+  tag: v4.2.0+y
+  days_old: 0
+  labels: {}
+- name: image/y
+  tag: 0.0.1+y
+  days_old: 0
+  labels: {}
+- name: image/y
+  tag: 0.0.2+y
+  days_old: 0
+  labels: {}
+- name: image/labeled-x
+  tag: "d0"
+  days_old: 0
+  labels:
+    prune: "true"
+    type: prod
+- name: image/labeled-x
+  tag: "d5"
+  days_old: 5
+  labels:
+    prune: "true"
+    type: prod
+- name: image/labeled-x
+  tag: "d4"
+  days_old: 4
+  labels:
+    prune: "true"
+    type: prod
+- name: image/labeled-x
+  tag: "d3"
+  days_old: 3
+  labels:
+    prune: "true"
+    type: prod
+- name: image/labeled-x
+  tag: "d2"
+  days_old: 2
+  labels:
+    prune: "true"
+    type: prod
+- name: image/labeled-x
+  tag: "d1"
+  days_old: 1
+  labels:
+    prune: "true"
+    type: prod
+- name: image/labeled-y
+  tag: "420.69"
+  days_old: 4
+  labels:
+    prune: "true"
+    type: devel
+- name: image/labeled-y
+  tag: "69.69"
+  days_old: 15
+  labels:
+    prune: "true"
+    type: devel
+- name: image/labeled-x
+  tag: "1.2.3"
+  days_old: 4
+  labels:
+    prune: "true"
+    type: devel
+- name: image/labeled-x
+  tag: "1.3"
+  labels:
+    prune: "true"
+    type: devel
+- name: image/labeled-x
+  tag: "1.5"
+  labels:
+    prune: "true"
+    type: devel
+- name: image/labeled-x
+  tag: "2.6.9"
+  labels:
+    prune: "true"
+    type: devel
+- name: image/labeled-x
+  tag: "0.0.1+notlabeled"
+- name: image/labeled-x
+  tag: "0.2.1+differentlabels"
+  labels:
+    something: notmatching
+tests:
+tests:
+  - config: test/fixtures/rules/multiple-repo-keep-latest.yaml
+    expected:
+      keep:
+        tumblr/fleeble:
+          - abc123f
+          - v0.6.1-261-gbb41394
+          - v0.6.1-262
+          - v0.69.1-262
+        tumblr/plumbus:
+          - pr-420
+          - v1.2.3
+          - pr-69
+          - pr-69420+13d
+      delete:
+        tumblr/fleeble:
+          - branch-v1.2.3-69
+          - garbage
+          - oldtag-1
+          - oldtag-2
+          - some-ignored-tag
+          - v0.4.2-259-something
+          - v0.5.0-260
+          - v0.5.1-260
+          - v0.5.2
+          - v0.5.23+test
+          - v0.5.3-nice
+          - v0.5.5-420
+          - v0.69-6969
+        tumblr/plumbus:
+          - master-2019
+          - master-v1.2.3-69
+          - pr-69419+16d
+          - pr-69420+14d
+          - pr-69421+15d
+          - v1.0.3+metadata
+  - config: test/fixtures/rules/onlylatest.yaml
+    expected:
+      keep: {}
+      delete: {}
+  - config: test/fixtures/rules/plumbus-pr.yaml
+    expected:
+      keep:
+        tumblr/plumbus:
+          - pr-420
+          - pr-69
+          - pr-69420+13d
+          - pr-69420+14d
+      delete:
+        tumblr/plumbus:
+          - pr-69419+16d
+          - pr-69421+15d
+  - config: test/fixtures/rules/fleeble-ignore-some.yaml
+    expected:
+      keep:
+        tumblr/fleeble:
+          - abc123f
+      delete:
+        tumblr/fleeble:
+          - branch-v1.2.3-69
+          - garbage
+          - oldtag-1
+          - oldtag-2
+  # this rule should retain only 5 latest version tags
+  # and will implicitly skip all versions taht dont parse correctly as a Version
+  # meaning there should be no deletedTags that arent correct semantic versions
+  - config: test/fixtures/rules/fleeble-match-version.yaml
+    expected:
+      keep:
+        tumblr/fleeble:
+          - v0.5.23+test
+          - v0.6.1-261-gbb41394
+          - v0.6.1-262
+          - v0.69-6969
+          - v0.69.1-262
+      delete:
+        tumblr/fleeble:
+          - v0.4.2-259-something
+          - v0.5.0-260
+          - v0.5.1-260
+          - v0.5.2
+          - v0.5.3-nice
+          - v0.5.5-420
+  # this should keep 2 latest version tags, and the last 2 days of all tags.
+  # this means there are some versions that would have been deleted, that are still retained
+  - config: test/fixtures/rules/fleeble-multiple.yaml
+    expected:
+      keep:
+        tumblr/fleeble:
+          - abc123f
+          - v0.69-6969
+          - v0.69.1-262
+      delete:
+        tumblr/fleeble:
+          - branch-v1.2.3-69
+          - garbage
+          - oldtag-1
+          - oldtag-2
+          - some-ignored-tag  # ignored by 1 rule, but deleted by the nDays rule!
+          - v0.4.2-259-something
+          - v0.5.0-260
+          - v0.5.1-260
+          - v0.5.2
+          - v0.5.23+test
+          - v0.5.3-nice
+          - v0.5.5-420
+          - v0.6.1-261-gbb41394
+          - v0.6.1-262
+  - config: test/fixtures/rules/multiple-repo-versions.yaml
+    expected:
+      keep:
+        image/x:
+          - v0.1.1+x
+          - v0.6.9+x
+          - v4.2.1+x
+        image/y:
+          - v0.1.0+y
+          - v0.69.420+y
+          - v4.2.0+y
+      delete:
+        image/x:
+          - 0.0.1+x
+          - 0.0.2+x
+        image/y:
+          - 0.0.1+y
+          - 0.0.2+y
+  # test that matching based on labels works with a keep_versions action
+  - config: test/fixtures/rules/labels-devel-3-versions.yaml
+    expected:
+      keep:
+        image/labeled-x:
+          - "2.6.9"
+          - "1.5"
+          - "1.3"
+        image/labeled-y:
+          - "420.69"
+          - "69.69"
+      delete:
+        image/labeled-x:
+          - "1.2.3"
+  # test that matching based on labels works with a keep_latest action
+  - config: test/fixtures/rules/labels-prod-3-latest.yaml
+    expected:
+      keep:
+        image/labeled-x:
+          - "d0"
+          - "d1"
+          - "d2"
+      delete:
+        image/labeled-x:
+          - "d3"
+          - "d4"
+          - "d5"
+  # test that matching based on labels works when we constrain matches to specific repos
+  - config: test/fixtures/rules/repo-and-labels-devel-3-versions.yaml
+    expected:
+      keep:
+        image/labeled-x:
+          - "2.6.9"
+          - "1.5"
+          - "1.3"
+      delete:
+        image/labeled-x:
+          - "1.2.3"

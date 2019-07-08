@@ -1,4 +1,4 @@
-package registry
+package client
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 
 	r "github.com/nokia/docker-registry-client/registry"
 	"github.com/tumblr/docker-registry-pruner/pkg/config"
-	"github.com/tumblr/docker-registry-pruner/pkg/rules"
+	"github.com/tumblr/docker-registry-pruner/pkg/registry"
 	"go.uber.org/zap"
 )
 
@@ -17,8 +17,7 @@ var (
 
 type Client struct {
 	r.Registry
-	Rules    []*rules.Rule
-	nWorkers int
+	Config *config.Config
 }
 
 type repoTagList struct {
@@ -55,8 +54,7 @@ func New(c *config.Config) (*Client, error) {
 
 	client := Client{
 		Registry: *hub,
-		Rules:    c.Rules,
-		nWorkers: c.Parallelism,
+		Config:   c,
 	}
 	return &client, nil
 }
@@ -79,7 +77,7 @@ func (hub *Client) tagFetchWorker(id int, workCh <-chan string, resultCh chan<- 
 	log.Debugf("%d: tag fetcher exiting", id)
 }
 
-func (hub *Client) manifestFetchWorker(id int, workCh <-chan repoTag, resultCh chan<- *Manifest) {
+func (hub *Client) manifestFetchWorker(id int, workCh <-chan repoTag, resultCh chan<- *registry.Manifest) {
 	for rt := range workCh {
 		log.Debugf("looking up manifest for %s:%s", rt.Repo, rt.Tag)
 		m, err := hub.Manifest(rt.Repo, rt.Tag)
@@ -93,7 +91,7 @@ func (hub *Client) manifestFetchWorker(id int, workCh <-chan repoTag, resultCh c
 	log.Debugf("%d: manifest fetcher exiting", id)
 }
 
-func (hub *Client) deleteManifestWorker(id int, workCh <-chan *Manifest, resultCh chan<- error) {
+func (hub *Client) deleteManifestWorker(id int, workCh <-chan *registry.Manifest, resultCh chan<- error) {
 	for m := range workCh {
 		log.Infof("%d: deleting manifest for %s:%s", id, m.Name, m.Tag)
 		err := hub.DeleteManifest(m)
@@ -123,12 +121,12 @@ func (hub *Client) RepoTags(repos []string) (map[string][]string, error) {
 	wg := sync.WaitGroup{}
 	workCh := make(chan string)
 	resultCh := make(chan repoTagList)
-	nWorkers := hub.nWorkers
+	nWorkers := hub.Config.Parallelism
 	if nWorkers <= 0 {
 		nWorkers = 1
 	}
 	go func(wg *sync.WaitGroup, resultCh chan repoTagList, workCh chan string) {
-		for i := 0; i < hub.nWorkers; i++ {
+		for i := 0; i < nWorkers; i++ {
 			wg.Add(1)
 			go func(i int, wg *sync.WaitGroup) {
 				hub.tagFetchWorker(i, workCh, resultCh)
@@ -156,25 +154,25 @@ func (hub *Client) RepoTags(repos []string) (map[string][]string, error) {
 	return repoTags, nil
 }
 
-func (hub *Client) Manifest(repo, tag string) (*Manifest, error) {
+func (hub *Client) Manifest(repo, tag string) (*registry.Manifest, error) {
 	m, err := hub.ManifestV1(repo, tag)
 	if err != nil {
 		return nil, err
 	}
 
-	return FromSignedManifest(m)
+	return registry.FromSignedManifest(m)
 }
 
-func (hub *Client) Manifests(repoTags map[string][]string) ([]*Manifest, error) {
+func (hub *Client) Manifests(repoTags map[string][]string) ([]*registry.Manifest, error) {
 	wg := sync.WaitGroup{}
 	workCh := make(chan repoTag)
-	resultCh := make(chan *Manifest)
-	nWorkers := hub.nWorkers
+	resultCh := make(chan *registry.Manifest)
+	nWorkers := hub.Config.Parallelism
 	if nWorkers <= 0 {
 		nWorkers = 1
 	}
-	go func(wg *sync.WaitGroup, resultCh chan *Manifest, workCh chan repoTag) {
-		for i := 0; i < hub.nWorkers; i++ {
+	go func(wg *sync.WaitGroup, resultCh chan *registry.Manifest, workCh chan repoTag) {
+		for i := 0; i < nWorkers; i++ {
 			wg.Add(1)
 			go func(i int, wg *sync.WaitGroup) {
 				hub.manifestFetchWorker(i, workCh, resultCh)
@@ -200,7 +198,7 @@ func (hub *Client) Manifests(repoTags map[string][]string) ([]*Manifest, error) 
 	}(workCh, repoTags)
 
 	// read from the results channel and stuff results into our tracking map
-	manifests := []*Manifest{}
+	manifests := []*registry.Manifest{}
 	for res := range resultCh {
 		manifests = append(manifests, res)
 	}
@@ -208,18 +206,18 @@ func (hub *Client) Manifests(repoTags map[string][]string) ([]*Manifest, error) 
 	return manifests, nil
 }
 
-func (hub *Client) DeleteManifestsParallel(manifests []*Manifest) (int, []error) {
+func (hub *Client) DeleteManifestsParallel(manifests []*registry.Manifest) (int, []error) {
 	// TODO(gabe) we should figure out how to abstract this parallel worker pattern into a generic system
 
 	wg := sync.WaitGroup{}
-	workCh := make(chan *Manifest)
+	workCh := make(chan *registry.Manifest)
 	resultCh := make(chan error)
-	nWorkers := hub.nWorkers
+	nWorkers := hub.Config.Parallelism
 	if nWorkers <= 0 {
 		nWorkers = 1
 	}
-	go func(wg *sync.WaitGroup, resultCh chan error, workCh chan *Manifest) {
-		for i := 0; i < hub.nWorkers; i++ {
+	go func(wg *sync.WaitGroup, resultCh chan error, workCh chan *registry.Manifest) {
+		for i := 0; i < nWorkers; i++ {
 			wg.Add(1)
 			go func(i int, wg *sync.WaitGroup) {
 				hub.deleteManifestWorker(i, workCh, resultCh)
@@ -231,7 +229,7 @@ func (hub *Client) DeleteManifestsParallel(manifests []*Manifest) (int, []error)
 	}(&wg, resultCh, workCh)
 
 	// enqueue the work to be done
-	go func(workCh chan<- *Manifest, manifests []*Manifest) {
+	go func(workCh chan<- *registry.Manifest, manifests []*registry.Manifest) {
 		for _, m := range manifests {
 			log.Debugf("enqueuing deletion of manifest for %s:%s\n", m.Name, m.Tag)
 			workCh <- m
@@ -252,7 +250,7 @@ func (hub *Client) DeleteManifestsParallel(manifests []*Manifest) (int, []error)
 	return deleted, errs
 }
 
-func (hub *Client) DeleteManifests(manifests []*Manifest) []error {
+func (hub *Client) DeleteManifests(manifests []*registry.Manifest) []error {
 	errs := []error{}
 	for _, m := range manifests {
 		err := hub.DeleteManifest(m)
@@ -264,7 +262,7 @@ func (hub *Client) DeleteManifests(manifests []*Manifest) []error {
 	return errs
 }
 
-func (hub *Client) DeleteManifest(m *Manifest) error {
+func (hub *Client) DeleteManifest(m *registry.Manifest) error {
 	desc, err := hub.Registry.ManifestDescriptor(m.Name, m.Tag)
 	if err != nil {
 		return err

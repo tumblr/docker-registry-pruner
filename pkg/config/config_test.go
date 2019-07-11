@@ -13,6 +13,7 @@ type errorFixture struct {
 }
 
 var (
+	rulesDir         = "test/fixtures/rules"
 	fixtureDirectory = "test/fixtures/config"
 	errorTests       = []errorFixture{
 		{
@@ -20,8 +21,8 @@ var (
 			expected: ErrMissingRegistry,
 		},
 		{
-			file:     "invalid-rule-missing-repos.yaml",
-			expected: rules.ErrMissingRepos,
+			file:     "invalid-rule-missing-repos-and-labels.yaml",
+			expected: rules.ErrMissingReposOrLabels,
 		},
 		{
 			file:     "invalid-rule-missing-action.yaml",
@@ -55,5 +56,28 @@ func TestLoadInvalidConfigs(t *testing.T) {
 			t.Errorf("Expected loading %s to produce error %v, but got %v", test.file, test.expected, err)
 			t.Fail()
 		}
+	}
+}
+
+func TestLoadRules(t *testing.T) {
+	tests := map[string]int{
+		"fleeble-ignore-some.yaml":   2,
+		"fleeble-match-version.yaml": 2,
+		"fleeble-match-all.yaml":     2,
+		"plumbus-pr.yaml":            1,
+		"fleeble-multiple.yaml":      3,
+		"multiple-repos.yaml":        3,
+	}
+	for f, nExpected := range tests {
+		cfg, err := LoadFromFile(rulesDir + "/" + f)
+		if err != nil {
+			t.Error(err)
+			t.Fail()
+		}
+		if len(cfg.Rules) != nExpected {
+			t.Errorf("%s: expected %d rules loaded but found %d", f, nExpected, len(cfg.Rules))
+			t.Fail()
+		}
+		t.Logf("Loaded %d rules\n", len(cfg.Rules))
 	}
 }

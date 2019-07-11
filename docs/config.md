@@ -9,10 +9,13 @@ A Rule is made up of a Selector, and an Action. See below for more details.
 A selector is a predicate that images must satisfy to be considered by the `Action` for deletion.
 
 * `repos` is a list of repositories to apply this rule to. This is literal string matching, _not_ regex. (i.e. `tumblr/plumbus`)
+* `labels` is a map of Docker labels that must be present on the Manifest. You can set these in your Dockerfiles with `LABEL foo=bar`. This is useful to create blanket rules for image retention that allow image owners to opt in to cleanups on their own.
 * `match_tags` is a list of regexp. Any matching image will have the rule action evaluated against it (i.e. `^v\d+`)
 * `ignore_tags` is a list of regexp. Any matching image will explicitly not be evaluated, even if it would have matched `match_tags`
 
 NOTE: the `^latest$` tag is always implicitly inherited into `ignore_tags`.
+
+At least one of the predicates `repos`, `labels` must be present. You may combine `repos` and `labels`, as described in the examples below.
 
 ## Actions
 
@@ -87,5 +90,19 @@ rules:
   - repos:
       - web/devtools
     keep_recent: 5
+
+  # for any image that has the labels {prune=true,environment=development}, expire images after 15 days
+  - labels:
+      prune: "true"
+      environment: "development"
+    keep_days: 15
+
+  # for any repo matching some/image||another/image, if they have the environment=production label, keep the last 5 versions
+  - repos:
+      - some/image
+      - another/image
+    labels:
+      environment: production
+    keep_versions: 5
 ```
 

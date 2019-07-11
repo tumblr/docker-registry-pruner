@@ -1,0 +1,10 @@
+---
+registry: https://foo.bar
+rules:
+  # match only image/labeled-x manifests that has the following labels, and only keep 3 versions
+  - repos:
+      - image/labeled-x
+    labels:
+      prune: "true"
+      type: "devel"
+    keep_versions: 3

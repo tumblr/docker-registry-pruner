@@ -6,130 +6,155 @@ between config and rules
 */
 
 import (
+	"gopkg.in/yaml.v2"
+	"io/ioutil"
 	"reflect"
 	"sort"
 	"testing"
 
 	_ "github.com/tumblr/docker-registry-pruner/internal/pkg/testing"
 	"github.com/tumblr/docker-registry-pruner/pkg/config"
+	"github.com/tumblr/docker-registry-pruner/pkg/registry"
 	"github.com/tumblr/docker-registry-pruner/pkg/rules"
 )
 
-var (
-	rulesDir   = "test/fixtures/rules"
-	testImages = map[string][]string{
-		"tumblr/fleeble": []string{"v0.6.0-480-g5d09186", "v0.6.0-486-g77397a0", "v0.6.0-413-g463a787", "latest", "v4.2.0", "v4.2.1", "some-ignored-tag", "anothertag", "0.1.2+notignored"},
-		"gar/nix":        []string{},
-		"foo/bar":        []string{"1.2.3", "abf273", "henlo"},
-		"image/x":        []string{"v0.1.1+x", "v0.6.9+x", "v4.2.1+x", "0.0.1+x", "0.0.2+x"},
-		"image/y":        []string{"v0.1.0+y", "v0.69.420+y", "v4.2.0+y", "0.0.1+y", "0.0.2+y"},
-		"tumblr/plumbus": []string{
-			"abcdef123", "v1.2.3", "v1.2.4", "v1.2.5", "v2.0+hello", "pr-123", "pr-124", "pr-2345",
-		},
+func manifestObjectsToManifests(objs []*manifestObject) []*registry.Manifest {
+	ms := []*registry.Manifest{}
+	for _, o := range objs {
+		m := mkmanifest(o.Name, o.Tag, o.DaysOld, o.Labels)
+		ms = append(ms, m)
 	}
-)
+	return ms
+}
 
-func TestLoadRules(t *testing.T) {
-	tests := map[string]int{
-		"fleeble-ignore-some.yaml":   2,
-		"fleeble-match-version.yaml": 2,
-		"fleeble-match-all.yaml":     2,
-		"plumbus-pr.yaml":            1,
-		"fleeble-multiple.yaml":      3,
-		"multiple-repos.yaml":        3,
+// testConfig is a configuration that defines a set of test. It is comprised of:
+// * SourceManifests: all Manifests that will be parsed into a registry.Manifest via mkmanifest. These are source material for the test suite
+// * Tests: List of `testCase`
+type testConfig struct {
+	SourceFile      string
+	Manifests       []*registry.Manifest
+	SourceManifests []*manifestObject `yaml:"source_manifests"`
+	Tests           []testCase        `yaml:"tests"`
+}
+
+// manifestObject will be parsed from test configs, and then pumped into mkmanifest()
+// to turn it into a registry.Manifest.
+type manifestObject struct {
+	Name    string
+	Tag     string
+	DaysOld int64             `yaml:"days_old"`
+	Labels  map[string]string `yaml:"labels"`
+}
+
+// testCase is a struct to define a specific test case. It is comprised of:
+// * Config: the yaml config that contains the Rule sets
+// * Expected: The map[repo][]tags that the rest should produce from the testConfig.Manifests as input
+type testCase struct {
+	Config   string `yaml:"config"`
+	Expected struct {
+		Keep   map[string][]string `yaml:"keep"`
+		Delete map[string][]string `yaml:"delete"`
+	} `yaml:"expected"`
+}
+
+func loadTestConfig(cfg string) (*testConfig, error) {
+	d, err := ioutil.ReadFile(cfg)
+	if err != nil {
+		return nil, err
 	}
-	for f, nExpected := range tests {
-		cfg, err := config.LoadFromFile(rulesDir + "/" + f)
-		if err != nil {
-			t.Error(err)
-			t.Fail()
-		}
-		if len(cfg.Rules) != nExpected {
-			t.Errorf("%s: expected %d rules loaded but found %d", f, nExpected, len(cfg.Rules))
-			t.Fail()
-		}
-		t.Logf("Loaded %d rules\n", len(cfg.Rules))
+
+	tc := testConfig{}
+	err = yaml.Unmarshal(d, &tc)
+	if err != nil {
+		return nil, err
 	}
+	tc.SourceFile = cfg
+	tc.Manifests = manifestObjectsToManifests(tc.SourceManifests)
+
+	return &tc, nil
 }
 
 func TestMatching(t *testing.T) {
-	fixturesExpected := map[string][]string{
-		"fleeble-match-all.yaml":     []string{"v0.6.0-480-g5d09186", "v0.6.0-486-g77397a0", "v0.6.0-413-g463a787", "v4.2.0", "v4.2.1", "some-ignored-tag", "0.1.2+notignored", "anothertag"},
-		"fleeble-match-version.yaml": []string{"v0.6.0-480-g5d09186", "v0.6.0-486-g77397a0", "v0.6.0-413-g463a787", "v4.2.0", "v4.2.1"},
-		"fleeble-ignore-some.yaml":   []string{"0.1.2+notignored", "anothertag"},
+	tc, err := loadTestConfig("test/fixtures/manifest_tests/manifest_matching_1.yaml")
+	if err != nil {
+		t.Error(err)
+		t.FailNow()
 	}
-	repo := "tumblr/fleeble"
-	for f, expectedTags := range fixturesExpected {
-		fixture := rulesDir + "/" + f
-		t.Logf("loading rules %s for %s", fixture, repo)
-		tags := testImages[repo]
 
-		cfg, err := config.LoadFromFile(fixture)
+	for _, test := range tc.Tests {
+		// sort any expected tag sets
+		for _, tags := range test.Expected.Keep {
+			sort.Strings(tags)
+		}
+		for _, tags := range test.Expected.Delete {
+			sort.Strings(tags)
+		}
+		t.Logf("%s: loading rules from %s", tc.SourceFile, test.Config)
+
+		cfg, err := config.LoadFromFile(test.Config)
 		if err != nil {
 			t.Error(err)
-			t.Fail()
+			t.FailNow()
 		}
-		t.Logf("Loaded %d rules\n", len(cfg.Rules))
+		t.Logf("%s: Loaded %d rules from %s (%d manifests)", tc.SourceFile, len(cfg.Rules), test.Config, len(tc.Manifests))
 		selectors := rules.RulesToSelectors(cfg.Rules)
 
-		foundTags := []string{}
-		for _, tag := range tags {
-			if rules.MatchAny(selectors, repo, tag) {
-				foundTags = append(foundTags, tag)
+		matchedManifests := map[string][]string{}
+		for _, manifest := range tc.Manifests {
+			if rules.MatchAny(selectors, manifest) {
+				if matchedManifests[manifest.Name] == nil {
+					matchedManifests[manifest.Name] = []string{}
+				}
+				matchedManifests[manifest.Name] = append(matchedManifests[manifest.Name], manifest.Tag)
+				sort.Strings(matchedManifests[manifest.Name])
 			}
 		}
 
-		sort.Strings(foundTags)
-		sort.Strings(expectedTags)
-		if !reflect.DeepEqual(expectedTags, foundTags) {
-			t.Errorf("%s: expected matching tags to be %v but got %v", fixture, expectedTags, foundTags)
-			t.Fail()
+		if !reflect.DeepEqual(test.Expected.Keep, matchedManifests) {
+			t.Errorf("%s: (rules %s) expected matching tags to be %v but got %v", tc.SourceFile, test.Config, test.Expected.Keep, matchedManifests)
+			t.FailNow()
 		}
 	}
 }
 
 func TestFilterRepoTags(t *testing.T) {
-	repoTags := testImages
-	fixturesRulesToExpected := map[string]map[string][]string{
-		"fleeble-ignore-some.yaml": map[string][]string{
-			"tumblr/fleeble": []string{"0.1.2+notignored", "anothertag"},
-		},
-		"fleeble-match-all.yaml": map[string][]string{
-			"tumblr/fleeble": []string{"0.1.2+notignored", "anothertag", "some-ignored-tag", "v0.6.0-413-g463a787", "v0.6.0-480-g5d09186", "v0.6.0-486-g77397a0", "v4.2.0", "v4.2.1"},
-		},
-		"fleeble-match-version.yaml": map[string][]string{
-			"tumblr/fleeble": []string{"v0.6.0-413-g463a787", "v0.6.0-480-g5d09186", "v0.6.0-486-g77397a0", "v4.2.0", "v4.2.1"},
-		},
-		"plumbus-pr.yaml": map[string][]string{
-			"tumblr/plumbus": []string{"pr-123", "pr-124", "pr-2345"},
-		},
-		"fleeble-tagselectors.yaml": map[string][]string{
-			"tumblr/fleeble": []string{"v0.6.0-413-g463a787", "v0.6.0-480-g5d09186", "v0.6.0-486-g77397a0", "v4.2.0", "v4.2.1"},
-		},
-		"multiple-repos.yaml": map[string][]string{
-			"tumblr/fleeble": []string{"v0.6.0-413-g463a787", "v0.6.0-480-g5d09186", "v0.6.0-486-g77397a0", "v4.2.0", "v4.2.1"},
-			"tumblr/plumbus": []string{"pr-123", "pr-124", "pr-2345"},
-		},
-		"multiple-repo-versions.yaml": map[string][]string{
-			"image/x": []string{"0.0.1+x", "0.0.2+x", "v0.1.1+x", "v0.6.9+x", "v4.2.1+x"},
-			"image/y": []string{"0.0.1+y", "0.0.2+y", "v0.1.0+y", "v0.69.420+y", "v4.2.0+y"},
-		},
+	tc, err := loadTestConfig("test/fixtures/manifest_tests/filter_repo_tags.yaml")
+	if err != nil {
+		t.Error(err)
+		t.FailNow()
 	}
-	for fixtureFile, expected := range fixturesRulesToExpected {
-		fixture := rulesDir + "/" + fixtureFile
-		t.Logf("Applying filters from fixture %s...", fixture)
 
-		cfg, err := config.LoadFromFile(fixture)
+	for _, test := range tc.Tests {
+		// sort any expected tag sets
+		for _, tags := range test.Expected.Keep {
+			sort.Strings(tags)
+		}
+		for _, tags := range test.Expected.Keep {
+			sort.Strings(tags)
+		}
+		t.Logf("%s: loading rules from %s", tc.SourceFile, test.Config)
+
+		cfg, err := config.LoadFromFile(test.Config)
 		if err != nil {
 			t.Error(err)
-			t.Fail()
+			t.FailNow()
 		}
 		selectors := rules.RulesToSelectors(cfg.Rules)
 
-		actualRepoTags := rules.FilterRepoTags(repoTags, selectors)
-		if !reflect.DeepEqual(expected, actualRepoTags) {
-			t.Errorf("%s: expected matching tags to be %v but got %v", fixture, expected, actualRepoTags)
-			t.Fail()
+		actualManifests := rules.FilterManifests(tc.Manifests, selectors)
+		// construct a map[string]map[string][]string from actualManifests to aid in comparison
+		actualManifestsTags := map[string][]string{}
+		for repo, ms := range actualManifests {
+			actualManifestsTags[repo] = []string{}
+			for _, m := range ms {
+				actualManifestsTags[repo] = append(actualManifestsTags[repo], m.Tag)
+			}
+			sort.Strings(actualManifestsTags[repo])
+		}
+
+		if !reflect.DeepEqual(test.Expected.Keep, actualManifestsTags) {
+			t.Errorf("%s: (rules %s) expected matching tags to be:\n%v\nbut got:\n%v", tc.SourceFile, test.Config, test.Expected.Keep, actualManifestsTags)
+			t.FailNow()
 		}
 	}
 }

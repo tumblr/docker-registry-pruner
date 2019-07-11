@@ -5,6 +5,7 @@ COPY . .
 RUN make && rm -rf vendor/
 
 FROM alpine:latest
+LABEL maintainer="Tumblr"
 RUN apk --no-cache add ca-certificates
 COPY --from=0 /app/bin/docker-registry-pruner /bin/docker-registry-pruner
 COPY ./entrypoint.sh /bin/entrypoint.sh

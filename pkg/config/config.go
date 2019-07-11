@@ -32,7 +32,8 @@ type Config struct {
 }
 
 type ConfigRule struct {
-	Repos []string
+	Repos  []string
+	Labels map[string]string
 	// IgnoreTags will ignore all manifests with the matching tags (regex)
 	IgnoreTags []string `yaml:"ignore_tags"`
 	// MatchTags will restrict the rule to only apply to manifests matching the regex tag
@@ -130,12 +131,16 @@ func ruleFromConfigRule(cr *ConfigRule) (*rules.Rule, error) {
 	r := rules.Rule{
 		Selector: rules.Selector{
 			Repos:      cr.Repos,
+			Labels:     cr.Labels,
 			MatchTags:  []*regexp.Regexp{},
 			IgnoreTags: []*regexp.Regexp{},
 		},
 		KeepDays:       cr.KeepDays,
 		KeepVersions:   cr.KeepVersions,
 		KeepMostRecent: cr.KeepMostRecent,
+	}
+	if r.Selector.Labels == nil {
+		r.Selector.Labels = map[string]string{}
 	}
 	for _, re := range cr.MatchTags {
 		x, err := regexp.Compile(re)

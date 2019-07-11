@@ -1,4 +1,4 @@
-# docker-registry-pruner 🌱✂️
+# docker-registry-pruner 🐳✂️
 
 
 `docker-registry-pruner` is a rules-based tool that applies business logic to docker images in a Docker Registry storage system for retention.

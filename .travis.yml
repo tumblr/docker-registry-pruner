@@ -1,0 +1,18 @@
+language: go
+
+go:
+  - "1.x"
+  - "1.11.5"
+  - "1.12"
+
+env:
+  - GO111MODULE=on
+
+#before_install:
+#  - rm go.sum
+
+#install: true # skip for now, due to gomodules being annoying
+
+script:
+  - make all
+  - make test

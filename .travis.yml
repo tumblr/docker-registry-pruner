@@ -1,0 +1,13 @@
+language: go
+
+go:
+  - "1.x"
+  - "1.11.5"
+  - "1.12"
+
+env:
+  - GO111MODULE=on
+
+script:
+  - make all
+  - make test

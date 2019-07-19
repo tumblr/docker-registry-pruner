@@ -83,5 +83,6 @@ To open a PR, please make sure you:
 * Fill in the PR template
 * Provide rationale about what improvement/bug you are addressing (link to Github issue too!)
 * Provide testing methodology, expected behavior, and unit tests
+* Sign the CLA, if you haven't already! A bot will comment on your PR if you have not filled it in yet.
 * @byxorna for review
 

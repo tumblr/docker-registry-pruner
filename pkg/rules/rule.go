@@ -138,7 +138,7 @@ func applyRules(ruleset []*Rule, manifests []*registry.Manifest) (keep []*regist
 					validVersionManifests = append(validVersionManifests, manifest)
 				}
 			}
-			sort.Sort(registry.ManifestVersionCollection(validVersionManifests))
+			sort.Reverse(registry.ManifestVersionCollection(validVersionManifests))
 			indexHigh := len(validVersionManifests)
 			indexLow := indexHigh - rule.KeepVersions
 			if indexLow < 0 {

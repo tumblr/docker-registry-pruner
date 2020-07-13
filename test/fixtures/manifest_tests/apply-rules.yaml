@@ -302,8 +302,8 @@ tests:
     expected:
       keep:
         tumblr/fleeble:
-          - v0.5.23+test
-          - v0.6.1-261-gbb41394
+          - v0.5.3-nice
+          - v0.5.5-420
           - v0.6.1-262
           - v0.69-6969
           - v0.69.1-262
@@ -313,8 +313,8 @@ tests:
           - v0.5.0-260
           - v0.5.1-260
           - v0.5.2
-          - v0.5.3-nice
-          - v0.5.5-420
+          - v0.5.23+test
+          - v0.6.1-261-gbb41394
   # this should keep 2 latest version tags, and the last 2 days of all tags.
   # this means there are some versions that would have been deleted, that are still retained
   - config: test/fixtures/rules/fleeble-multiple.yaml
@@ -322,7 +322,7 @@ tests:
       keep:
         tumblr/fleeble:
           - abc123f
-          - v0.69-6969
+          - v0.6.1-262
           - v0.69.1-262
       delete:
         tumblr/fleeble:
@@ -330,7 +330,7 @@ tests:
           - garbage
           - oldtag-1
           - oldtag-2
-          - some-ignored-tag  # ignored by 1 rule, but deleted by the nDays rule!
+          - some-ignored-tag
           - v0.4.2-259-something
           - v0.5.0-260
           - v0.5.1-260
@@ -339,25 +339,25 @@ tests:
           - v0.5.3-nice
           - v0.5.5-420
           - v0.6.1-261-gbb41394
-          - v0.6.1-262
+          - v0.69-6969
   - config: test/fixtures/rules/multiple-repo-versions.yaml
     expected:
       keep:
         image/x:
-          - v0.1.1+x
-          - v0.6.9+x
-          - v4.2.1+x
-        image/y:
-          - v0.1.0+y
-          - v0.69.420+y
-          - v4.2.0+y
-      delete:
-        image/x:
           - 0.0.1+x
           - 0.0.2+x
+          - v4.2.1+x
         image/y:
           - 0.0.1+y
           - 0.0.2+y
+          - v4.2.0+y
+      delete:
+        image/x:
+          - v0.1.1+x
+          - v0.6.9+x
+        image/y:
+          - v0.1.0+y
+          - v0.69.420+y
   # test that matching based on labels works with a keep_versions action
   - config: test/fixtures/rules/labels-devel-3-versions.yaml
     expected:
